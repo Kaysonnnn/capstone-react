@@ -2,6 +2,8 @@ import { Route } from "react-router-dom";
 import HomeTemplate from "../pages/HomeTemplate";
 import HomePage from "../pages/HomeTemplate/HomePage";
 import AboutPage from "../pages/HomeTemplate/AboutPage";
+import ListMoviePage from "../pages/HomeTemplate/ListMoviePage";
+import OrderMovie from "../pages/HomeTemplate/OrderMovie";
 
 const routes = [
   {
@@ -16,6 +18,15 @@ const routes = [
         path: "/about",
         element: AboutPage,
       },
+      {
+        path: "/list-movie",
+        element: ListMoviePage,
+      },
+      {
+        path: "/order-movie",
+        element: OrderMovie,
+      },
+
 
     ]
   }
