@@ -13,19 +13,6 @@ export const fetchListMovie = createAsyncThunk(
     try {
       const result = await api.get('QuanLyPhim/LayDanhSachPhim?maNhom=GP01');
 
-      console.log("API Response:", result);
-      console.log("API Status:", result.status);
-      console.log("API Data:", result.data);
-      console.log("API Content:", result.data?.content);
-      console.log("Content type:", typeof result.data?.content);
-      console.log("Content is array:", Array.isArray(result.data?.content));
-      if (result.data?.content) {
-        console.log("Content length:", result.data.content.length);
-        console.log("First item:", result.data.content[0]);
-      }
-
-
-
       return result.data.content;
     } catch (error) {
 

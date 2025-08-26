@@ -85,8 +85,6 @@ export default function HomePage() {
             <button className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-4 z-10 bg-gray-800 hover:bg-gray-700 rounded-full p-2 transition-colors">
               <ChevronRight size={24} />
             </button>
-
-            {/* Movies Container */}
             <div className="overflow-hidden">
               <div className="flex space-x-4 transition-transform duration-300">
                 {/* Movie Card Template - repeat this for each movie */}
@@ -98,8 +96,6 @@ export default function HomePage() {
                         {/* Poster image sẽ được thêm vào đây */}
                         <span className="text-gray-500">Poster {index + 1}</span>
                       </div>
-                      
-                      {/* Hover overlay */}
                       <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-300 flex items-center justify-center">
                         <Play 
                           size={32} 

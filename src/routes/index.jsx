@@ -4,6 +4,7 @@ import HomePage from "../pages/HomeTemplate/HomePage";
 import AboutPage from "../pages/HomeTemplate/AboutPage";
 import ListMoviePage from "../pages/HomeTemplate/ListMoviePage";
 import OrderMovie from "../pages/HomeTemplate/OrderMovie";
+import MovieDetailsPage from "../pages/HomeTemplate/MovieDetailsPage";
 
 const routes = [
   {
@@ -25,6 +26,10 @@ const routes = [
       {
         path: "/order-movie",
         element: OrderMovie,
+      },
+      {
+        path: "movie-details/:movieId",
+        element: MovieDetailsPage,
       },
 
 
