@@ -3,13 +3,7 @@ import { useForm } from "react-hook-form";
 import { format } from "date-fns";
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  addMovieApi,
-  addMovieWithoutImageApi,
-  addMovieAlternativeApi,
-  testApiConnection,
-  testAddMovieApi,
-} from "../../../services/admin.api";
+import { addMovieApi } from "../../../services/admin.api";
 
 const schema = z.object({
   tenPhim: z.string().min(1, "Vui lòng nhập tên phim"),
@@ -43,7 +37,7 @@ export default function AddMovie() {
       ngayKhoiChieu: "",
       trangThai: "false",
       Hot: true,
-      danhGia: "0",
+      danhGia: "10", // Cập nhật từ "0" thành "10" theo FormData structure
       hinhAnh: null,
     },
     resolver: zodResolver(schema),
@@ -69,17 +63,6 @@ export default function AddMovie() {
       setIsSubmitting(true);
       console.log("Form values:", values);
 
-      // Kiểm tra kết nối API trước
-      try {
-        console.log("🔍 Kiểm tra kết nối API...");
-        await testApiConnection();
-        console.log("✅ Kết nối API thành công");
-      } catch (error) {
-        console.error("❌ Kết nối API thất bại:", error);
-        alert("Không thể kết nối đến API. Vui lòng kiểm tra lại!");
-        return;
-      }
-
       const { trangThai, Hot, ...rest } = values;
 
       const newValues = {
@@ -89,85 +72,44 @@ export default function AddMovie() {
         Hot: Hot === true,
       };
 
-      // Chuẩn bị dữ liệu phim
-      const movieData = {
-        tenPhim: newValues.tenPhim,
-        trailer: newValues.trailer,
-        moTa: newValues.moTa,
-        danhGia: newValues.danhGia,
-        SapChieu: newValues.SapChieu,
-        DangChieu: newValues.DangChieu,
-        ngayKhoiChieu: format(new Date(newValues.ngayKhoiChieu), "dd/MM/yyyy"),
-        maNhom: newValues.maNhom,
-        Hot: newValues.Hot,
-      };
+      // Tạo FormData cho API
+      const formData = new FormData();
 
-      // Thử API 1: /api/QuanLyPhim/ThemPhimUploadHinh (với FormData) - API chính
+      // Thêm các trường dữ liệu theo đúng FormData structure
+      formData.append("maPhim", "0"); // int maPhim = 0
+      formData.append("tenPhim", newValues.tenPhim); // string tenPhim
+      formData.append("trailer", newValues.trailer); // string trailer
+      formData.append("moTa", newValues.moTa); // string moTa
+      formData.append("maNhom", "GP01"); // string maNhom = "GP01"
+      formData.append(
+        "ngayKhoiChieu",
+        format(new Date(newValues.ngayKhoiChieu), "dd/MM/yyyy")
+      ); // string ngayKhoiChieu = "10/10/2020"
+      formData.append("SapChieu", newValues.SapChieu); // bool? SapChieu = true
+      formData.append("DangChieu", newValues.DangChieu); // bool? DangChieu = true
+      formData.append("Hot", newValues.Hot); // bool? Hot = true
+      formData.append("danhGia", newValues.danhGia); // int? danhGia = 10
+
+      // Thêm hình ảnh nếu có
       if (newValues.hinhAnh) {
-        try {
-          console.log(
-            "🔄 Thử API 1: /api/QuanLyPhim/ThemPhimUploadHinh (với hình)..."
-          );
-          const formData = new FormData();
-
-          formData.append("tenPhim", newValues.tenPhim);
-          formData.append("trailer", newValues.trailer);
-          formData.append("moTa", newValues.moTa);
-          formData.append("danhGia", newValues.danhGia);
-          formData.append("SapChieu", newValues.SapChieu);
-          formData.append("DangChieu", newValues.DangChieu);
-          formData.append(
-            "ngayKhoiChieu",
-            format(new Date(newValues.ngayKhoiChieu), "dd/MM/yyyy")
-          );
-          formData.append("maNhom", newValues.maNhom);
-          formData.append("hinhAnh", newValues.hinhAnh);
-
-          const response = await addMovieApi(formData);
-          console.log("✅ API 1 thành công:", response);
-          alert("Thêm phim thành công! (Với hình ảnh)");
-          reset();
-          setImagePreview(null);
-          return;
-        } catch (error) {
-          console.error("❌ API 1 thất bại:", error);
-        }
+        formData.append("hinhAnh", newValues.hinhAnh); // IFormFile hinhAnh
       }
 
-      // Thử API 2: /api/QuanLyPhim (query parameters) - API không hình
-      try {
-        console.log("🔄 Thử API 2: /api/QuanLyPhim (query parameters)...");
-        const response = await addMovieWithoutImageApi(movieData);
-        console.log("✅ API 2 thành công:", response);
-        alert("Thêm phim thành công! (Không có hình)");
-        reset();
-        setImagePreview(null);
-        return;
-      } catch (error) {
-        console.error("❌ API 2 thất bại:", error);
+      // Log FormData để debug
+      console.log("🔍 FormData contents:");
+      for (let [key, value] of formData.entries()) {
+        console.log(`${key}:`, value);
       }
 
-      // Thử API 3: /api/QuanLyPhim/ThemPhimUploadHinh (JSON format) - thử nghiệm
-      try {
-        console.log(
-          "🔄 Thử API 3: /api/QuanLyPhim/ThemPhimUploadHinh (JSON format)..."
-        );
-        const response = await testAddMovieApi(movieData);
-        console.log("✅ API 3 thành công:", response);
-        alert("Thêm phim thành công! (JSON format)");
-        reset();
-        setImagePreview(null);
-        return;
-      } catch (error) {
-        console.error("❌ API 3 thất bại:", error);
-      }
+      // Gọi API thêm phim
+      const response = await addMovieApi(formData);
+      console.log("✅ Add Movie API Response:", response);
 
-      // Nếu tất cả API đều thất bại
-      throw new Error(
-        "Tất cả các API thêm phim đều thất bại. Vui lòng kiểm tra lại thông tin."
-      );
+      alert("Thêm phim thành công!");
+      reset();
+      setImagePreview(null);
     } catch (error) {
-      console.error("Error adding movie:", error);
+      console.error("❌ Error adding movie:", error);
 
       let errorMessage = "Có lỗi xảy ra khi thêm phim";
 

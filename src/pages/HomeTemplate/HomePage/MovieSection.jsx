@@ -1,171 +1,202 @@
-import React from 'react';
-import { Play, ChevronLeft, ChevronRight } from 'lucide-react';
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { Play } from "lucide-react";
+import { fetchListMovie } from "../ListMoviePage/slice";
 
 export default function MovieSection() {
-  const movies = [
-    {
-      id: 1,
-      title: "The Fantastic Four: First Steps",
-      vietnameseTitle: "Bộ Tứ Siêu Đẳng: Bước Đi Đầu Tiên",
-      rating: "9.6",
-      ageRating: "T13",
-      format: "2D, IMAX",
-      releaseDate: "25.07.2025",
-      year: "2025",
-      image: "bg-gradient-to-br from-blue-500 to-purple-600",
-    },
-    {
-      id: 2,
-      title: "Mang Mẹ Đi Bỏ",
-      vietnameseTitle: "Take Mom to Throw Away",
-      rating: "8.5",
-      ageRating: "K",
-      format: "2D",
-      releaseDate: "01.08.2025",
-      year: "2025",
-      image: "bg-gradient-to-br from-pink-500 to-red-500",
-    },
-    {
-      id: 3,
-      title: "Detective Conan: One-eyed Flashback",
-      vietnameseTitle: "Thám Tử Lừng Danh Conan: Dư Ảnh Của Độc Nhãn",
-      rating: "9.6",
-      ageRating: "K",
-      format: "2D",
-      releaseDate: "25.07.2025",
-      year: "2025",
-      image: "bg-gradient-to-br from-green-500 to-blue-500",
-    },
-    {
-      id: 4,
-      title: "Toàn Trí Độc Giả",
-      vietnameseTitle: "Omniscient Reader",
-      rating: "7.0",
-      ageRating: "T16",
-      format: "2D",
-      releaseDate: "31.07.2025",
-      year: "2025",
-      image: "bg-gradient-to-br from-yellow-500 to-orange-500",
-    },
-    {
-      id: 5,
-      title: "Avatar 3",
-      vietnameseTitle: "Thế Thần 3",
-      rating: "9.8",
-      ageRating: "T13",
-      format: "3D, IMAX",
-      releaseDate: "15.12.2025",
-      year: "2025",
-      image: "bg-gradient-to-br from-cyan-500 to-blue-600",
-    },
-    {
-      id: 6,
-      title: "Fast X Part 2",
-      vietnameseTitle: "Quá Nhanh Quá Nguy Hiểm X: Phần 2",
-      rating: "8.2",
-      ageRating: "T16",
-      format: "2D, 3D",
-      releaseDate: "20.08.2025",
-      year: "2025",
-      image: "bg-gradient-to-br from-red-600 to-orange-500",
-    },
-    {
-      id: 7,
-      title: "Spider-Man 4",
-      vietnameseTitle: "Người Nhện 4",
-      rating: "9.3",
-      ageRating: "T13",
-      format: "2D, IMAX",
-      releaseDate: "05.09.2025",
-      year: "2025",
-      image: "bg-gradient-to-br from-red-500 to-blue-600",
-    },
-    {
-      id: 8,
-      title: "John Wick 5",
-      vietnameseTitle: "Sát Thủ John Wick 5",
-      rating: "9.1",
-      ageRating: "T18",
-      format: "2D",
-      releaseDate: "12.10.2025",
-      year: "2025",
-      image: "bg-gradient-to-br from-gray-700 to-black",
-    },
-  ];
+  const { data, loading, error } = useSelector((state) => state.listMovieSlice);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  return (
-    <div className="py-12 px-4 bg-gray-900 text-white">
-      <div className="max-w-7xl mx-auto">
-        {/* Section Title */}
-        <h2 className="text-2xl font-bold mb-8 text-left">
-          <span className="text-orange-500">Showing</span> MOVIES
-        </h2>
+  useEffect(() => {
+    dispatch(fetchListMovie());
+  }, [dispatch]);
 
-        {/* Movies Grid with Carousel Style */}
-        <div className="relative">
-          {/* Navigation arrows */}
-          <button className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-4 z-10 bg-gray-800 hover:bg-gray-700 rounded-full p-2 transition-colors">
-            <ChevronLeft size={24} />
-          </button>
-          <button className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-4 z-10 bg-gray-800 hover:bg-gray-700 rounded-full p-2 transition-colors">
-            <ChevronRight size={24} />
-          </button>
-          
-          <div className="overflow-hidden">
-            <div className="flex space-x-4 transition-transform duration-300">
-              {movies.map((movie) => (
-                <div key={movie.id} className="flex-none w-48 group cursor-pointer">
-                  {/* Movie Poster */}
-                  <div className="relative mb-3 overflow-hidden rounded-lg">
-                    <div className={`w-full h-72 ${movie.image} flex items-end relative`}>
-                      {/* Movie info overlay on poster */}
-                      <div className="absolute inset-0 bg-black bg-opacity-20"></div>
-                      <div className="absolute top-2 right-2 flex space-x-1">
-                        <span className="bg-yellow-500 text-white px-2 py-1 rounded text-xs font-bold">
-                          {movie.rating} ★
-                        </span>
-                        <span className="bg-gray-600 text-white px-2 py-1 rounded text-xs font-bold">
-                          {movie.ageRating}
-                        </span>
-                      </div>
-                      <div className="absolute bottom-2 left-2 right-2">
-                        <p className="text-white text-xs font-medium">
-                          {movie.format}
-                        </p>
-                      </div>
-                    </div>
-                    
-                    {/* Hover overlay with play button */}
-                    <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-50 transition-all duration-300 flex items-center justify-center rounded-lg">
-                      <Play 
-                        size={32} 
-                        className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300" 
-                        fill="white"
-                      />
-                    </div>
-                  </div>
-                  
-                  {/* Movie Info */}
-                  <div className="text-center">
-                    <h3 className="font-semibold text-white mb-1 text-sm line-clamp-2">
-                      {movie.title}
-                    </h3>
-                    <p className="text-gray-400 text-xs mb-2">
-                      {movie.vietnameseTitle}
-                    </p>
-                    <div className="flex justify-between items-center text-xs">
-                      <span className="text-gray-500">
-                        {movie.releaseDate}
-                      </span>
-                      <button className="bg-red-600 hover:bg-red-700 text-white px-2 py-1 rounded text-xs font-medium transition-colors duration-200">
-                        Mua vé
-                      </button>
-                    </div>
-                  </div>
-                </div>
-              ))}
+  const handleMovieClick = (movieId) => {
+    if (movieId) {
+      navigate(`/movie-details/${movieId}`);
+    }
+  };
+
+  const handleBuyTicket = (e, movieId) => {
+    e.stopPropagation();
+    navigate("/order-movie");
+  };
+
+  const handleViewAll = () => {
+    navigate("/list-movie");
+  };
+
+  // Hiển thị loading
+  if (loading) {
+    return (
+      <div className="py-16 bg-gray-50">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold mb-4">
+              <span className="text-blue-600">Phim</span> Đang Chiếu
+            </h2>
+            <p className="text-gray-600 text-lg">
+              Khám phá những bộ phim mới nhất và hấp dẫn nhất
+            </p>
+          </div>
+
+          <div className="flex justify-center items-center py-12">
+            <div className="relative">
+              <div className="w-16 h-16 border-4 border-blue-200 border-t-blue-600 rounded-full animate-spin"></div>
+              <div className="absolute top-2 left-2 w-12 h-12 border-4 border-gray-200 border-t-gray-600 rounded-full animate-spin animation-delay-150"></div>
             </div>
           </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Hiển thị error
+  if (error) {
+    return (
+      <div className="py-16 bg-gray-50">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold mb-4">
+              <span className="text-blue-600">Phim</span> Đang Chiếu
+            </h2>
+            <p className="text-gray-600 text-lg">
+              Khám phá những bộ phim mới nhất và hấp dẫn nhất
+            </p>
+          </div>
+
+          <div className="flex justify-center items-center py-12">
+            <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 text-center">
+              <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg
+                  className="w-6 h-6 text-red-600"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              </div>
+              <p className="text-gray-600 mb-4">Không thể tải danh sách phim</p>
+              <button
+                onClick={() => dispatch(fetchListMovie())}
+                className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-sm font-medium"
+              >
+                Thử lại
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Hiển thị danh sách phim (chỉ hiển thị 8 phim đầu tiên)
+  const displayMovies = data ? data.slice(0, 8) : [];
+
+  return (
+    <div className="py-16 bg-gray-50 text-gray-900">
+      <div className="max-w-7xl mx-auto">
+        {/* Section Title */}
+        <div className="text-center mb-12">
+          <h2 className="text-4xl font-bold mb-4">
+            <span className="text-blue-600">Phim</span> Đang Chiếu
+          </h2>
+          <p className="text-gray-600 text-lg">
+            Khám phá những bộ phim mới nhất và hấp dẫn nhất
+          </p>
+        </div>
+
+        {/* Movies Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+          {displayMovies.map((movie) => (
+            <div
+              key={movie.maPhim}
+              className="group cursor-pointer"
+              onClick={() => handleMovieClick(movie.maPhim)}
+            >
+              {/* Movie Poster */}
+              <div className="relative mb-4 overflow-hidden rounded-lg bg-white shadow-lg">
+                <div className="aspect-[2/3] relative">
+                  <img
+                    src={movie.hinhAnh}
+                    alt={movie.tenPhim}
+                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    onError={(e) => {
+                      e.target.src =
+                        "https://via.placeholder.com/400x600?text=No+Image";
+                    }}
+                  />
+
+                  {/* Overlay */}
+                  <div className="absolute inset-0 bg-black/0 group-hover:bg-black/50 transition-all duration-300 flex items-center justify-center">
+                    <Play
+                      size={48}
+                      className="text-white opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+                      fill="white"
+                    />
+                  </div>
+
+                  {/* Rating and Age */}
+                  <div className="absolute top-3 right-3 flex space-x-2">
+                    <span className="bg-blue-600 text-white px-2 py-1 rounded text-xs font-bold">
+                      {movie.danhGia || "N/A"} ★
+                    </span>
+                    <span className="bg-white/90 text-gray-900 px-2 py-1 rounded text-xs font-bold backdrop-blur-sm">
+                      {movie.maPhim ? "T13" : "K"}
+                    </span>
+                  </div>
+
+                  {/* Format */}
+                  <div className="absolute bottom-3 left-3">
+                    <span className="bg-white/90 text-gray-900 px-2 py-1 rounded text-xs font-medium backdrop-blur-sm">
+                      2D
+                    </span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Movie Info */}
+              <div className="text-center">
+                <h3 className="font-semibold text-gray-900 mb-2 text-sm line-clamp-2 leading-tight">
+                  {movie.tenPhim}
+                </h3>
+                <p className="text-gray-600 text-xs mb-3 line-clamp-2">
+                  {movie.biDanh || movie.tenPhim}
+                </p>
+                <div className="flex justify-between items-center">
+                  <span className="text-gray-500 text-xs">
+                    {movie.ngayKhoiChieu
+                      ? new Date(movie.ngayKhoiChieu).toLocaleDateString(
+                          "vi-VN"
+                        )
+                      : "Sắp ra mắt"}
+                  </span>
+                  <button
+                    className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg text-xs font-semibold transition-all duration-200 transform hover:scale-105 shadow-md"
+                    onClick={(e) => handleBuyTicket(e, movie.maPhim)}
+                  >
+                    Mua vé
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* View All Button */}
+        <div className="text-center mt-12">
+          <button
+            className="border-2 border-blue-600 text-blue-600 hover:bg-blue-600 hover:text-white px-8 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 shadow-lg"
+            onClick={handleViewAll}
+          >
+            Xem tất cả phim
+          </button>
         </div>
       </div>
     </div>

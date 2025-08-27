@@ -3,7 +3,10 @@ import { Link, Outlet, useLocation, useNavigate } from "react-router-dom";
 
 export default function AdminTemplate() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
-  const [userInfo, setUserInfo] = useState(null);
+  const [userInfo, setUserInfo] = useState({
+    hoTen: "Admin User",
+    maLoaiNguoiDung: "QuanTri",
+  });
   const [expandedMenus, setExpandedMenus] = useState({
     "Quản lý phim": true,
     "Quản lý người dùng": true,
@@ -12,16 +15,6 @@ export default function AdminTemplate() {
   });
   const location = useLocation();
   const navigate = useNavigate();
-
-  useEffect(() => {
-    const storedUserInfo = localStorage.getItem("userInfo");
-    if (storedUserInfo) {
-      setUserInfo(JSON.parse(storedUserInfo));
-    } else {
-      // Nếu không có userInfo, redirect về trang auth
-      navigate("/auth");
-    }
-  }, [navigate]);
 
   // Menu items được tổ chức theo nhóm
   const menuGroups = [
@@ -171,19 +164,8 @@ export default function AdminTemplate() {
 
   const handleLogout = () => {
     localStorage.removeItem("userInfo");
-    navigate("/auth");
+    navigate("/");
   };
-
-  if (!userInfo) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
-          <p className="mt-4 text-gray-600">Đang tải...</p>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -223,15 +205,17 @@ export default function AdminTemplate() {
           {/* Logo Section */}
           <div className="px-6 py-6 border-b border-gray-200">
             <div className="flex items-center space-x-3">
-              <img
-                src="/src/assets/galaxy-logo.png"
-                alt="Galaxy Cinema"
-                className="h-8 w-auto"
-              />
+              <div className="w-12 h-12 bg-gradient-to-r from-blue-600 to-blue-800 rounded-lg flex items-center justify-center">
+                <svg
+                  className="w-8 h-8 text-white"
+                  fill="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path d="M18 3v2h-2V3H8v2H6V3H4v18h2v-2h2v2h8v-2h2v2h2V3h-2zM8 17H6v-2h2v2zm0-4H6v-2h2v2zm0-4H6V7h2v2zm10 4h-2v-2h2v2zm0-4h-2V7h2v2z" />
+                </svg>
+              </div>
               <div>
-                <h1 className="text-lg font-bold text-gray-900">
-                  Galaxy Cinema
-                </h1>
+                <h1 className="text-lg font-bold text-gray-900">CinemaMax</h1>
                 <p className="text-xs text-gray-500">Admin Panel</p>
               </div>
             </div>

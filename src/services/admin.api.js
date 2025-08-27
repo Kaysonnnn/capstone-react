@@ -13,11 +13,14 @@ export const getMoviesApi = async (
       "soTrang:",
       soTrang
     );
+
+    // Sử dụng endpoint đã hoạt động trước đó
     const response = await api.get(
-      `/api/QuanLyPhim/LayDanhSachPhimPhanTrang?maNhom=${maNhom}&soTrang=${soTrang}&soPhanTuTrenTrang=${soPhanTuTrenTrang}`
+      `/QuanLyPhim/LayDanhSachPhim?maNhom=${maNhom}`
     );
+
     console.log("✅ API Response:", response.data);
-    return response.data.content;
+    return response.data.content || response.data;
   } catch (error) {
     console.error("❌ API Error in getMoviesApi:", error);
     console.error("Error response:", error.response?.data);
@@ -30,21 +33,11 @@ export const getAllMoviesApi = async () => {
   try {
     console.log("🔍 API Call: getAllMoviesApi");
 
-    // Thử endpoint chính
-    try {
-      const response = await api.get("/api/QuanLyPhim/LayDanhSachPhim");
-      console.log("✅ API Response:", response.data);
-      return response.data.content;
-    } catch (error) {
-      console.error("❌ Primary get movies endpoint failed:", error);
+    // Sử dụng endpoint đã hoạt động trước đó
+    const response = await api.get("/QuanLyPhim/LayDanhSachPhim?maNhom=GP01");
 
-      // Thử endpoint thay thế - phân trang
-      const response = await api.get(
-        "/api/QuanLyPhim/LayDanhSachPhimPhanTrang?maNhom=GP01&soTrang=1&soPhanTuTrenTrang=100"
-      );
-      console.log("✅ Alternative API Response:", response.data);
-      return response.data.content.items || [];
-    }
+    console.log("✅ API Response:", response.data);
+    return response.data.content || response.data;
   } catch (error) {
     console.error("❌ API Error in getAllMoviesApi:", error);
     console.error("Error response:", error.response?.data);
@@ -62,7 +55,7 @@ export const getMoviesByDateApi = async (tuNgay, denNgay, maNhom = "GP01") => {
       denNgay
     );
     const response = await api.get(
-      `/api/QuanLyPhim/LayDanhSachPhimTheoNgay?tuNgay=${tuNgay}&denNgay=${denNgay}&maNhom=${maNhom}`
+      `/QuanLyPhim/LayDanhSachPhimTheoNgay?tuNgay=${tuNgay}&denNgay=${denNgay}&maNhom=${maNhom}`
     );
     console.log("✅ API Response:", response.data);
     return response.data.content;
@@ -77,7 +70,7 @@ export const getMoviesByDateApi = async (tuNgay, denNgay, maNhom = "GP01") => {
 export const getBannersApi = async () => {
   try {
     console.log("🔍 API Call: getBannersApi");
-    const response = await api.get("/api/QuanLyPhim/LayDanhSachBanner");
+    const response = await api.get("/QuanLyPhim/LayDanhSachBanner");
     console.log("✅ API Response:", response.data);
     return response.data.content;
   } catch (error) {
@@ -88,10 +81,10 @@ export const getBannersApi = async () => {
   }
 };
 
-// API thêm phim với hình ảnh - sử dụng đúng format theo Swagger
+// API thêm phim với hình ảnh - sử dụng đúng format theo FormData
 export const addMovieApi = async (formData) => {
   try {
-    console.log("🔍 Sending FormData to Add Movie API (with image)...");
+    console.log("🔍 Sending FormData to Add Movie API...");
 
     // Log FormData contents for debugging
     for (let [key, value] of formData.entries()) {
@@ -112,8 +105,9 @@ export const addMovieApi = async (formData) => {
       }
     }
 
+    // Sử dụng endpoint chính xác theo URL người dùng cung cấp
     const response = await api.post(
-      "/api/QuanLyPhim/ThemPhimUploadHinh",
+      "/QuanLyPhim/ThemPhimUploadHinh",
       formData,
       {
         headers: {
@@ -127,7 +121,6 @@ export const addMovieApi = async (formData) => {
     console.error("❌ Add Movie API Error:", error);
     console.error("Error status:", error.response?.status);
     console.error("Error data:", error.response?.data);
-    console.error("Error headers:", error.response?.headers);
     throw error;
   }
 };
@@ -159,7 +152,7 @@ export const addMovieWithoutImageApi = async (movieData) => {
     });
 
     const response = await api.post(
-      `/api/QuanLyPhim?${queryParams.toString()}`,
+      `/QuanLyPhim?${queryParams.toString()}`,
       formData,
       {
         headers: {
@@ -184,7 +177,7 @@ export const addMovieAlternativeApi = async (movieData) => {
     console.log("Movie data:", movieData);
 
     const response = await api.post(
-      "/api/QuanLyPhim/ThemPhimUploadHinh",
+      "/QuanLyPhim/ThemPhimUploadHinh",
       movieData
     );
     console.log("✅ Alternative Add Movie API Response:", response);
@@ -201,7 +194,7 @@ export const addMovieAlternativeApi = async (movieData) => {
 export const testApiConnection = async () => {
   try {
     console.log("🔍 Testing API connection...");
-    const response = await api.get("/api/QuanLyPhim/LayDanhSachPhim");
+    const response = await api.get("/QuanLyPhim/LayDanhSachPhim");
     console.log("✅ API connection successful:", response.data);
     return response.data;
   } catch (error) {
@@ -235,7 +228,7 @@ export const testAddMovieApi = async (movieData) => {
     console.log("Test data:", testData);
 
     const response = await api.post(
-      "/api/QuanLyPhim/ThemPhimUploadHinh",
+      "/QuanLyPhim/ThemPhimUploadHinh",
       testData,
       {
         headers: {
@@ -243,6 +236,51 @@ export const testAddMovieApi = async (movieData) => {
         },
       }
     );
+    console.log("✅ Test Add Movie API Response:", response);
+    return response.data;
+  } catch (error) {
+    console.error("❌ Test Add Movie API Error:", error);
+    console.error("Error status:", error.response?.status);
+    console.error("Error data:", error.response?.data);
+    throw error;
+  }
+};
+
+// Test API thêm phim với dữ liệu mẫu
+export const testAddMovieWithSampleData = async () => {
+  try {
+    console.log("🔍 Testing Add Movie API with sample data...");
+
+    const formData = new FormData();
+
+    // Dữ liệu mẫu theo FormData structure
+    formData.append("maPhim", "0");
+    formData.append("tenPhim", "Test Movie");
+    formData.append("trailer", "https://www.youtube.com/watch?v=test");
+    formData.append("moTa", "Đây là phim test để kiểm tra API");
+    formData.append("maNhom", "GP01");
+    formData.append("ngayKhoiChieu", "10/10/2020");
+    formData.append("SapChieu", "true");
+    formData.append("DangChieu", "true");
+    formData.append("Hot", "true");
+    formData.append("danhGia", "10");
+
+    // Log FormData contents
+    console.log("🔍 Sample FormData contents:");
+    for (let [key, value] of formData.entries()) {
+      console.log(`${key}:`, value);
+    }
+
+    const response = await api.post(
+      "/QuanLyPhim/ThemPhimUploadHinh",
+      formData,
+      {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      }
+    );
+
     console.log("✅ Test Add Movie API Response:", response);
     return response.data;
   } catch (error) {
@@ -276,43 +314,17 @@ export const updateMovieApi = async (formData) => {
       }
     }
 
-    const response = await api.post(
-      "/api/QuanLyPhim/CapNhatPhimUpload",
-      formData,
-      {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      }
-    );
+    const response = await api.post("/QuanLyPhim/CapNhatPhimUpload", formData, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
     console.log("✅ Update Movie API Response:", response);
     return response.data;
   } catch (error) {
     console.error("❌ Update Movie API Error:", error);
     console.error("Error status:", error.response?.status);
     console.error("Error data:", error.response?.data);
-    console.error("Error headers:", error.response?.headers);
-
-    // Xử lý lỗi 401 Unauthorized
-    if (error.response?.status === 401) {
-      const errorMessage =
-        "Lỗi xác thực (401). Vui lòng kiểm tra:\n" +
-        "1. Token Authorization có hợp lệ không\n" +
-        "2. TokenCybersoft có đúng không\n" +
-        "3. Thử đăng nhập lại";
-      throw new Error(errorMessage);
-    }
-
-    // Xử lý lỗi 403 cụ thể
-    if (error.response?.status === 403) {
-      const errorMessage =
-        "Lỗi quyền truy cập (403). Vui lòng kiểm tra:\n" +
-        "1. Token đăng nhập có hợp lệ không\n" +
-        "2. Tài khoản có quyền cập nhật phim không\n" +
-        "3. Thử đăng nhập lại";
-      throw new Error(errorMessage);
-    }
-
     throw error;
   }
 };
@@ -321,21 +333,10 @@ export const deleteMovieApi = async (maPhim) => {
   try {
     console.log("🔍 Deleting movie with maPhim:", maPhim);
 
-    // Thử endpoint chính
-    try {
-      const response = await api.delete(
-        `/api/QuanLyPhim/XoaPhim?MaPhim=${maPhim}`
-      );
-      console.log("✅ Delete Movie API Response:", response);
-      return response.data;
-    } catch (error) {
-      console.error("❌ Primary delete endpoint failed:", error);
-
-      // Thử endpoint thay thế
-      const response = await api.delete(`/api/QuanLyPhim/XP?MaPhim=${maPhim}`);
-      console.log("✅ Alternative Delete Movie API Response:", response);
-      return response.data;
-    }
+    // Sử dụng DELETE method
+    const response = await api.delete(`/QuanLyPhim/XoaPhim?MaPhim=${maPhim}`);
+    console.log("✅ Delete Movie API Response:", response);
+    return response.data;
   } catch (error) {
     console.error("❌ Delete Movie API Error:", error);
     console.error("Error status:", error.response?.status);
@@ -348,27 +349,12 @@ export const getMovieByIdApi = async (maPhim) => {
   try {
     console.log("🔍 API Call: getMovieByIdApi with maPhim:", maPhim);
 
-    // Thử endpoint chính
-    try {
-      const response = await api.get(
-        `/api/QuanLyPhim/LayThongTinPhim?MaPhim=${maPhim}`
-      );
-      console.log("✅ API Response:", response.data);
-      return response.data.content;
-    } catch (error) {
-      console.error("❌ Primary get movie endpoint failed:", error);
-
-      // Thử endpoint thay thế - lấy từ danh sách
-      const allMovies = await getAllMoviesApi();
-      const movie = allMovies.find((m) => m.maPhim === parseInt(maPhim));
-
-      if (!movie) {
-        throw new Error(`Không tìm thấy phim với mã: ${maPhim}`);
-      }
-
-      console.log("✅ Found movie from alternative method:", movie);
-      return movie;
-    }
+    // Sử dụng GET method
+    const response = await api.get(
+      `/QuanLyPhim/LayThongTinPhim?MaPhim=${maPhim}`
+    );
+    console.log("✅ API Response:", response.data);
+    return response.data.content;
   } catch (error) {
     console.error("❌ API Error in getMovieByIdApi:", error);
     console.error("Error response:", error.response?.data);
@@ -406,7 +392,7 @@ export const checkMovieNameExistsApi = async (tenPhim, maPhim = null) => {
     );
 
     // Lấy danh sách tất cả phim
-    const response = await api.get("/api/QuanLyPhim/LayDanhSachPhim");
+    const response = await api.get("/QuanLyPhim/LayDanhSachPhim");
     const movies = response.data.content;
 
     // Kiểm tra xem có phim nào khác có cùng tên không
@@ -435,7 +421,7 @@ export const checkUserAccountExistsApi = async (taiKhoan) => {
     );
 
     // Lấy danh sách tất cả người dùng
-    const response = await api.get("/api/QuanLyNguoiDung/LayDanhSachNguoiDung");
+    const response = await api.get("/QuanLyNguoiDung/LayDanhSachNguoiDung");
     const users = response.data.content;
 
     // Kiểm tra xem có người dùng nào có cùng tài khoản không
@@ -458,9 +444,7 @@ export const checkUserAccountExistsApi = async (taiKhoan) => {
 export const getUserTypesApi = async () => {
   try {
     console.log("🔍 API Call: getUserTypesApi");
-    const response = await api.get(
-      "/api/QuanLyNguoiDung/LayDanhSachLoaiNguoiDung"
-    );
+    const response = await api.get("/QuanLyNguoiDung/LayDanhSachLoaiNguoiDung");
     console.log("✅ API Response:", response.data);
     return response.data.content;
   } catch (error) {
@@ -474,7 +458,7 @@ export const getUserTypesApi = async () => {
 export const getAllUsersApi = async () => {
   try {
     console.log("🔍 API Call: getAllUsersApi");
-    const response = await api.get("/api/QuanLyNguoiDung/LayDanhSachNguoiDung");
+    const response = await api.get("/QuanLyNguoiDung/LayDanhSachNguoiDung");
     console.log("✅ API Response:", response.data);
     return response.data.content;
   } catch (error) {
@@ -492,7 +476,7 @@ export const getUsersApi = async (
 ) => {
   try {
     const response = await api.get(
-      `/api/QuanLyNguoiDung/LayDanhSachNguoiDungPhanTrang?maNhom=${maNhom}&soTrang=${soTrang}&soPhanTuTrenTrang=${soPhanTuTrenTrang}`
+      `/QuanLyNguoiDung/LayDanhSachNguoiDungPhanTrang?maNhom=${maNhom}&soTrang=${soTrang}&soPhanTuTrenTrang=${soPhanTuTrenTrang}`
     );
     return response.data.content;
   } catch (error) {
@@ -503,7 +487,7 @@ export const getUsersApi = async (
 export const searchUsersApi = async (tuKhoa) => {
   try {
     const response = await api.get(
-      `/api/QuanLyNguoiDung/TimKiemNguoiDung?tuKhoa=${tuKhoa}`
+      `/QuanLyNguoiDung/TimKiemNguoiDung?tuKhoa=${tuKhoa}`
     );
     return response.data.content;
   } catch (error) {
@@ -518,7 +502,7 @@ export const searchUsersPaginatedApi = async (
 ) => {
   try {
     const response = await api.get(
-      `/api/QuanLyNguoiDung/TimKiemNguoiDungPhanTrang?tuKhoa=${tuKhoa}&soTrang=${soTrang}&soPhanTuTrenTrang=${soPhanTuTrenTrang}`
+      `/QuanLyNguoiDung/TimKiemNguoiDungPhanTrang?tuKhoa=${tuKhoa}&soTrang=${soTrang}&soPhanTuTrenTrang=${soPhanTuTrenTrang}`
     );
     return response.data.content;
   } catch (error) {
@@ -529,7 +513,7 @@ export const searchUsersPaginatedApi = async (
 export const getAccountInfoApi = async (accountData) => {
   try {
     const response = await api.post(
-      "/api/QuanLyNguoiDung/ThongTinTaiKhoan",
+      "/QuanLyNguoiDung/ThongTinTaiKhoan",
       accountData
     );
     return response.data.content;
@@ -542,7 +526,7 @@ export const getUserInfoApi = async (userData) => {
   try {
     console.log("🔍 API Call: getUserInfoApi with data:", userData);
     const response = await api.post(
-      "/api/QuanLyNguoiDung/LayThongTinNguoiDung",
+      "/QuanLyNguoiDung/LayThongTinNguoiDung",
       userData
     );
     console.log("✅ API Response:", response.data);
@@ -580,10 +564,7 @@ export const getUserInfoAlternativeApi = async (taiKhoan) => {
 export const addUserApi = async (userData) => {
   try {
     console.log("🔍 API Call: addUserApi with data:", userData);
-    const response = await api.post(
-      "/api/QuanLyNguoiDung/ThemNguoiDung",
-      userData
-    );
+    const response = await api.post("/QuanLyNguoiDung/ThemNguoiDung", userData);
     console.log("✅ API Response:", response.data);
     return response.data;
   } catch (error) {
@@ -598,7 +579,7 @@ export const updateUserApi = async (userData) => {
   try {
     console.log("🔍 API Call: updateUserApi with data:", userData);
     const response = await api.post(
-      "/api/QuanLyNguoiDung/CapNhatThongTinNguoiDung",
+      "/QuanLyNguoiDung/CapNhatThongTinNguoiDung",
       userData
     );
     console.log("✅ API Response:", response.data);
@@ -614,7 +595,7 @@ export const updateUserApi = async (userData) => {
 export const updateUserPostApi = async (userData) => {
   try {
     const response = await api.post(
-      "/api/QuanLyNguoiDung/CapNhatThongTinNguoiDung",
+      "/QuanLyNguoiDung/CapNhatThongTinNguoiDung",
       userData
     );
     return response.data;
@@ -627,7 +608,7 @@ export const deleteUserApi = async (taiKhoan) => {
   try {
     console.log("🔍 API Call: deleteUserApi with taiKhoan:", taiKhoan);
     const response = await api.delete(
-      `/api/QuanLyNguoiDung/XoaNguoiDung?TaiKhoan=${taiKhoan}`
+      `/QuanLyNguoiDung/XoaNguoiDung?TaiKhoan=${taiKhoan}`
     );
     console.log("✅ API Response:", response.data);
     return response.data;
@@ -642,7 +623,7 @@ export const deleteUserApi = async (taiKhoan) => {
 // ===== THEATER MANAGEMENT =====
 export const getTheatersApi = async () => {
   try {
-    const response = await api.get("/api/QuanLyRap/LayThongTinHeThongRap");
+    const response = await api.get("/QuanLyRap/LayThongTinHeThongRap");
     return response.data.content;
   } catch (error) {
     throw error;
@@ -652,7 +633,7 @@ export const getTheatersApi = async () => {
 export const getTheaterByIdApi = async (maHeThongRap) => {
   try {
     const response = await api.get(
-      `/api/QuanLyRap/LayThongTinCumRapTheoHeThong?maHeThongRap=${maHeThongRap}`
+      `/QuanLyRap/LayThongTinCumRapTheoHeThong?maHeThongRap=${maHeThongRap}`
     );
     return response.data.content;
   } catch (error) {
@@ -664,7 +645,7 @@ export const getTheaterByIdApi = async (maHeThongRap) => {
 export const getShowtimesApi = async (maPhim) => {
   try {
     const response = await api.get(
-      `/api/QuanLyRap/LayThongTinLichChieuPhim?MaPhim=${maPhim}`
+      `/QuanLyRap/LayThongTinLichChieuPhim?MaPhim=${maPhim}`
     );
     return response.data.content;
   } catch (error) {
@@ -674,10 +655,7 @@ export const getShowtimesApi = async (maPhim) => {
 
 export const addShowtimeApi = async (showtimeData) => {
   try {
-    const response = await api.post(
-      "/api/QuanLyDatVe/TaoLichChieu",
-      showtimeData
-    );
+    const response = await api.post("/QuanLyDatVe/TaoLichChieu", showtimeData);
     return response.data;
   } catch (error) {
     throw error;
@@ -688,7 +666,7 @@ export const addShowtimeApi = async (showtimeData) => {
 export const getBookingsApi = async (maLichChieu) => {
   try {
     const response = await api.get(
-      `/api/QuanLyDatVe/LayDanhSachPhongVe?MaLichChieu=${maLichChieu}`
+      `/QuanLyDatVe/LayDanhSachPhongVe?MaLichChieu=${maLichChieu}`
     );
     return response.data.content;
   } catch (error) {
@@ -701,7 +679,7 @@ export const getStatisticsApi = async () => {
   try {
     // Sử dụng API thực tế để lấy thống kê
     const response = await api.get(
-      "/api/QuanLyPhim/LayDanhSachPhimPhanTrang?maNhom=GP01&soTrang=1&soPhanTuTrenTrang=100"
+      "/QuanLyPhim/LayDanhSachPhimPhanTrang?maNhom=GP01&soTrang=1&soPhanTuTrenTrang=100"
     );
     const movies = response.data.content.items || [];
 
@@ -726,10 +704,7 @@ export const getStatisticsApi = async () => {
 export const loginAdminApi = async (credentials) => {
   try {
     console.log("🔐 Login attempt with:", credentials);
-    const response = await api.post(
-      "/api/QuanLyNguoiDung/DangNhap",
-      credentials
-    );
+    const response = await api.post("/QuanLyNguoiDung/DangNhap", credentials);
     console.log("✅ Login successful:", response.data);
     return response.data.content;
   } catch (error) {
@@ -740,7 +715,7 @@ export const loginAdminApi = async (credentials) => {
 
 export const registerAdminApi = async (userData) => {
   try {
-    const response = await api.post("/api/QuanLyNguoiDung/DangKy", userData);
+    const response = await api.post("/QuanLyNguoiDung/DangKy", userData);
     return response.data;
   } catch (error) {
     throw error;
@@ -765,7 +740,7 @@ export const getCurrentUserApi = async () => {
 export const getCinemaSystemsApi = async () => {
   try {
     console.log("🎬 Fetching cinema systems...");
-    const response = await api.get("/api/QuanLyRap/LayThongTinHeThongRap");
+    const response = await api.get("/QuanLyRap/LayThongTinHeThongRap");
     console.log("✅ Cinema systems:", response.data);
     // Trả về content nếu có, hoặc toàn bộ data
     return response.data.content || response.data || [];
@@ -786,7 +761,7 @@ export const getCinemaClustersApi = async (maHeThongRap) => {
     }
 
     const response = await api.get(
-      `/api/QuanLyRap/LayThongTinCumRapTheoHeThong?maHeThongRap=${maHeThongRap}`
+      `/QuanLyRap/LayThongTinCumRapTheoHeThong?maHeThongRap=${maHeThongRap}`
     );
     console.log("✅ Cinema clusters response:", response.data);
 
@@ -855,10 +830,7 @@ export const getCinemaClustersApi = async (maHeThongRap) => {
 export const createShowtimeApi = async (showtimeData) => {
   try {
     console.log("🎬 Creating showtime with data:", showtimeData);
-    const response = await api.post(
-      "/api/QuanLyDatVe/TaoLichChieu",
-      showtimeData
-    );
+    const response = await api.post("/QuanLyDatVe/TaoLichChieu", showtimeData);
     console.log("✅ Showtime created:", response.data);
     return response.data;
   } catch (error) {
@@ -875,7 +847,7 @@ export const getShowtimesByMovieApi = async (maPhim) => {
     // Thử endpoint chính để lấy lịch chiếu theo phim
     try {
       const response = await api.get(
-        `/api/QuanLyDatVe/LayDanhSachPhongVe?MaLichChieu=${maPhim}`
+        `/QuanLyDatVe/LayDanhSachPhongVe?MaLichChieu=${maPhim}`
       );
       console.log("✅ Showtimes (primary):", response.data);
 
@@ -894,7 +866,7 @@ export const getShowtimesByMovieApi = async (maPhim) => {
 
       // Thử endpoint thay thế - lấy tất cả lịch chiếu
       const allShowtimesResponse = await api.get(
-        "/api/QuanLyDatVe/LayDanhSachPhongVe"
+        "/QuanLyDatVe/LayDanhSachPhongVe"
       );
       console.log("✅ All showtimes:", allShowtimesResponse.data);
 
@@ -922,7 +894,7 @@ export const deleteShowtimeApi = async (maLichChieu) => {
   try {
     console.log("🎬 Deleting showtime:", maLichChieu);
     const response = await api.delete(
-      `/api/QuanLyDatVe/XoaLichChieu?MaLichChieu=${maLichChieu}`
+      `/QuanLyDatVe/XoaLichChieu?MaLichChieu=${maLichChieu}`
     );
     console.log("✅ Showtime deleted:", response.data);
     return response.data;
