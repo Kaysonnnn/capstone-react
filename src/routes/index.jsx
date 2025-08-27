@@ -18,6 +18,7 @@ import CreateShowtime from "../pages/AdminTemplate/CreateShowtime/create_showtim
 import TheaterManagement from "../pages/AdminTemplate/TheaterManagement/theater_management";
 import ShowtimeManagement from "../pages/AdminTemplate/ShowtimeManagement/showtime_management";
 import AddTheater from "../pages/AdminTemplate/TheaterManagement/AddTheater/add_theater";
+import AuthPage from "../pages/AdminTemplate/AuthPage/auth_page";
 
 
 
@@ -126,10 +127,10 @@ const routes = [
       // },
     ],
   },
-  // {
-  //   path: "auth",
-  //   element: AuthPage,
-  // },
+  {
+    path: "auth",
+    element: AuthPage,
+  },
 ]
 
 export const generateRoutes = () => {
